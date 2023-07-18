@@ -1,4 +1,3 @@
-
 import boto3
 
 # Create a DynamoDB client
@@ -11,18 +10,15 @@ table_name = 'your-table-name'
 partition_key_value = 'your-partition-key-value'
 
 # Fetch the item from the DynamoDB table using the partition key
-response = dynamodb.get_item(
+response = dynamodb.query(
     TableName=table_name,
-    Key={
-        'partition_key_name': {'S': partition_key_value}
-    }
+    KeyConditionExpression='#pk = :pk',
+    ExpressionAttributeNames={'#pk': 'partition_key_name'},
+    ExpressionAttributeValues={':pk': {'S': partition_key_value}}
 )
 
-# Check if the item exists in the response
-if 'Item' in response:
-    item = response['Item']
+# Process the retrieved items
+for item in response['Items']:
     # Access the desired attribute value
-    attribute_value = item['attribute_name']['S']
+    attribute_value = item.get('attribute_name', {}).get('S')
     print(attribute_value)
-else:
-    print('Item not found')
