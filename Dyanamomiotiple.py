@@ -1,4 +1,4 @@
-import boto3
+whyimport boto3
 
 # Configure AWS credentials and region
 session = boto3.Session(
@@ -92,6 +92,42 @@ response = dynamodb.scan(**scan_params)
 items = response['Items']
 
 # Process the scanned items
+for item in items:
+    print(item)
+    
+
+
+
+
+
+
+import boto3
+
+# Create DynamoDB client
+dynamodb = boto3.client('dynamodb')
+
+# Define query parameters
+table_name = 'YourTableName'
+index_name = 'YourGSIName'
+column_name = 'YourColumnName'
+desired_value = 'YourDesiredValue'
+
+# Construct the query parameters
+query_params = {
+    'TableName': table_name,
+    'IndexName': index_name,
+    'KeyConditionExpression': "#col = :value",
+    'ExpressionAttributeNames': {'#col': column_name},
+    'ExpressionAttributeValues': {':value': {'S': desired_value}}
+}
+
+# Perform the query operation
+response = dynamodb.query(**query_params)
+
+# Retrieve the queried items
+items = response['Items']
+
+# Process the queried items
 for item in items:
     print(item)
     
