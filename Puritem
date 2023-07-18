@@ -1,0 +1,24 @@
+import boto3
+
+# Create a DynamoDB client
+dynamodb = boto3.client('dynamodb')
+
+# Specify the table name
+table_name = 'your-table-name'
+
+# Define the item attributes
+item = {
+    'id': {'N': '123'},
+    'name': {'S': 'John Doe'},
+    'age': {'N': '30'},
+    'email': {'S': 'johndoe@example.com'}
+}
+
+# Add/update the item in the DynamoDB table
+response = dynamodb.put_item(
+    TableName=table_name,
+    Item=item
+)
+
+# Print the response
+print(response)
