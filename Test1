@@ -1,0 +1,35 @@
+import boto3
+
+# Create a DynamoDB client
+dynamodb = boto3.client('dynamodb')
+
+# Specify the table name and GSI name
+table_name = 'your-table-name'
+index_name = 'biller-index'
+
+# Initialize the starting key
+starting_key = None
+
+while True:
+    # Paginate through the GSI to retrieve 100 items
+    response = dynamodb.query(
+        TableName=table_name,
+        IndexName=index_name,
+        KeyConditionExpression='your-key-condition-expression',
+        ProjectionExpression='your-projection-expression',
+        Limit=100,
+        ExclusiveStartKey=starting_key
+    )
+
+    # Process the retrieved items
+    items = response['Items']
+    for item in items:
+        # Process each item as needed
+        # Example: Print the item
+        print(item)
+
+    # Check if there are more items to fetch
+    if 'LastEvaluatedKey' in response:
+        starting_key = response['LastEvaluatedKey']
+    else:
+        break
