@@ -65,3 +65,33 @@ items = response['Responses'][table_name]
 # Process the queried items
 for item in items:
     print(item)
+
+
+import boto3
+
+# Create DynamoDB client
+dynamodb = boto3.client('dynamodb')
+
+# Define query parameters
+table_name = 'YourTableName'
+column_name = 'YourColumnName'
+desired_value = 'YourDesiredValue'
+
+# Construct the scan parameters
+scan_params = {
+    'TableName': table_name,
+    'FilterExpression': '#col = :value',
+    'ExpressionAttributeNames': {'#col': column_name},
+    'ExpressionAttributeValues': {':value': {'S': desired_value}}
+}
+
+# Perform the scan operation
+response = dynamodb.scan(**scan_params)
+
+# Retrieve the scanned items
+items = response['Items']
+
+# Process the scanned items
+for item in items:
+    print(item)
+    
