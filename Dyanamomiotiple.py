@@ -1,3 +1,34 @@
+
+import boto3
+
+# Create a DynamoDB client
+dynamodb = boto3.client('dynamodb')
+
+# Specify the table name and GSI index name
+table_name = 'your-table-name'
+index_name = 'your-gsi-index-name'
+
+# Specify the value for querying
+category_value = 'your-category-value'
+
+# Query using the GSI
+response = dynamodb.query(
+    TableName=table_name,
+    IndexName=index_name,
+    KeyConditionExpression='blr_category = :val',
+    ExpressionAttributeValues={
+        ':val': {'S': category_value}
+    }
+)
+
+# Process the response
+items = response['Items']
+# Process the items retrieved from the query result
+
+
+
+
+
 huwhyimport boto3
 
 # Configure AWS credentials and region
