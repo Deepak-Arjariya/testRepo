@@ -81,5 +81,27 @@ if __name__ == "__main__":
     if secret:
         print("Secret Retrieved:")
         print(secret)
-        
-        
+
+
+
+import random
+import string
+
+def generate_strong_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+
+    # Randomly replace some characters with uppercase characters
+    num_uppercase = random.randint(1, length // 2)  # At least one, up to half of the password length
+    uppercase_indices = random.sample(range(length), num_uppercase)
+    password_list = list(password)
+    for index in uppercase_indices:
+        password_list[index] = password_list[index].upper()
+
+    return ''.join(password_list)
+
+if __name__ == "__main__":
+    password_length = int(input("Enter the desired length of the password (default is 12): "))
+    password = generate_strong_password(password_length)
+    print("Generated Strong Password:", password)
+    
