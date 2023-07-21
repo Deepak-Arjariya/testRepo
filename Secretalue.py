@@ -105,3 +105,37 @@ if __name__ == "__main__":
     password = generate_strong_password(password_length)
     print("Generated Strong Password:", password)
     
+
+
+
+import boto3
+from datetime import datetime
+
+# Initialize the AWS Secrets Manager client
+secrets_manager = boto3.client('secretsmanager')
+
+def update_secret_tag_with_timestamp(secret_name):
+    try:
+        response = secrets_manager.describe_secret(SecretId=secret_name)
+        existing_tags = response['Tags']
+
+        # Check if 'LastUpdated' tag already exists and remove it to update it later
+        updated_tags = [tag for tag in existing_tags if tag['Key'] != 'LastUpdated']
+
+        current_time = datetime.now().isoformat()
+        updated_tags.append({
+            'Key': 'LastUpdated',
+            'Value': current_time
+        })
+
+        # Update the secret's tags
+        secrets_manager.tag_resource(SecretId=secret_name, Tags=updated_tags)
+
+        print(f"Tag 'LastUpdated' updated successfully for secret: {secret_name}")
+    except Exception as e:
+        print(f"Error updating tag: {e}")
+
+if __name__ == "__main__":
+    secret_name = input("Enter the name of the secret to update the tag: ")
+    update_secret_tag_with_timestamp(secret_name)
+    
