@@ -229,4 +229,26 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'body': 'Failed to send email. Please check the logs for more details.'
         }
+
+
+import boto3
+
+# Initialize the AWS Organizations client
+organizations_client = boto3.client('organizations')
+
+def get_aws_account_name():
+    try:
+        response = organizations_client.describe_account()
+        account_name = response['Account']['Name']
+        return account_name
+    except Exception as e:
+        print(f"Error retrieving account name: {e}")
+        return None
+
+if __name__ == "__main__":
+    account_name = get_aws_account_name()
+    if account_name:
+        print("AWS Account Name:", account_name)
+    else:
+        print("Unable to retrieve AWS account name.")
         
