@@ -1,3 +1,53 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_email(sender_email, receiver_email, subject, body, smtp_server, smtp_port, username, password):
+    try:
+        # Create a MIMEText object to represent the email
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+        msg['Subject'] = subject
+
+        # Attach the email body as a plain text
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Establish a connection to the SMTP server
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Use TLS encryption for security
+        server.login(username, password)
+
+        # Send the email
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.quit()
+
+        print("Email sent successfully!")
+        return True
+
+    except Exception as e:
+        print("Error sending email:", e)
+        return False
+
+if __name__ == "__main__":
+    sender_email = "your_sender_email@example.com"
+    receiver_email = "recipient@example.com"
+    subject = "Test Email from Python SMTP"
+    body = "This is a test email sent using Python SMTP library."
+
+    # Replace with your SMTP server and authentication details
+    smtp_server = "your_smtp_server"
+    smtp_port = 587
+    username = "your_smtp_username"
+    password = "your_smtp_password"
+
+    send_email(sender_email, receiver_email, subject, body, smtp_server, smtp_port, username, password)
+    
+
+
+
+
+
 inimport boto3
 
 # Initialize the AWS Secrets Manager client
