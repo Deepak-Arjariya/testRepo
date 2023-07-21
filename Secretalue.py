@@ -25,3 +25,31 @@ if __name__ == "__main__":
 
     secret_name = input("Enter the name of the secret to update: ")
     update_secret(secret_name)
+
+
+
+
+
+import boto3
+import json
+
+# Initialize the AWS Secrets Manager client
+secrets_manager = boto3.client('secretsmanager')
+
+def get_secret_string(secret_name):
+    try:
+        response = secrets_manager.get_secret_value(SecretId=secret_name)
+        secret_data = response['SecretString']
+        secret_dict = json.loads(secret_data)
+        return secret_dict
+    except Exception as e:
+        print(f"Error retrieving secret: {e}")
+        return None
+
+if __name__ == "__main__":
+    secret_name = input("Enter the name of the secret to retrieve: ")
+    secret = get_secret_string(secret_name)
+    if secret:
+        print("Secret Retrieved:")
+        print(secret)
+        
