@@ -138,4 +138,43 @@ def update_secret_tag_with_timestamp(secret_name):
 if __name__ == "__main__":
     secret_name = input("Enter the name of the secret to update the tag: ")
     update_secret_tag_with_timestamp(secret_name)
+
+
+
+
+
+
+import boto3
+
+def send_email(subject, body, sender, recipient):
+    ses_client = boto3.client('ses')
+    
+    response = ses_client.send_email(
+        Source=sender,
+        Destination={
+            'ToAddresses': [recipient]
+        },
+        Message={
+            'Subject': {
+                'Data': subject
+            },
+            'Body': {
+                'Text': {
+                    'Data': body
+                }
+            }
+        }
+    )
+    
+    print("Email sent successfully:", response)
+
+def lambda_handler(event, context):
+    # Replace with your email addresses
+    sender_email = "your_sender_email@example.com"
+    recipient_email = "recipient@example.com"
+    
+    email_subject = "Test Email from AWS Lambda"
+    email_body = "This is a test email sent from an AWS Lambda function."
+    
+    send_email(email_subject, email_body, sender_email, recipient_email)
     
