@@ -178,3 +178,55 @@ def lambda_handler(event, context):
     
     send_email(email_subject, email_body, sender_email, recipient_email)
     
+
+
+import boto3
+import logging
+
+def send_email(subject, body, sender, recipient):
+    ses_client = boto3.client('ses')
+    
+    try:
+        response = ses_client.send_email(
+            Source=sender,
+            Destination={
+                'ToAddresses': [recipient]
+            },
+            Message={
+                'Subject': {
+                    'Data': subject
+                },
+                'Body': {
+                    'Text': {
+                        'Data': body
+                    }
+                }
+            }
+        )
+        
+        logging.info("Email sent successfully: %s", response)
+        return True
+
+    except Exception as e:
+        logging.error("Error sending email: %s", e)
+        return False
+
+def lambda_handler(event, context):
+    # Replace with your email addresses
+    sender_email = "your_sender_email@example.com"
+    recipient_email = "recipient@example.com"
+    
+    email_subject = "Test Email from AWS Lambda"
+    email_body = "This is a test email sent from an AWS Lambda function."
+    
+    if send_email(email_subject, email_body, sender_email, recipient_email):
+        return {
+            'statusCode': 200,
+            'body': 'Email sent successfully!'
+        }
+    else:
+        return {
+            'statusCode': 500,
+            'body': 'Failed to send email. Please check the logs for more details.'
+        }
+        
