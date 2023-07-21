@@ -1,4 +1,4 @@
-import boto3
+inimport boto3
 
 # Initialize the AWS Secrets Manager client
 secrets_manager = boto3.client('secretsmanager')
@@ -251,4 +251,41 @@ if __name__ == "__main__":
         print("AWS Account Name:", account_name)
     else:
         print("Unable to retrieve AWS account name.")
-        
+
+
+
+
+import boto3
+
+# Initialize the AWS STS client
+sts_client = boto3.client('sts')
+
+def get_aws_account_name():
+    try:
+        # Get the AWS account ID from the execution context of the Lambda function
+        account_id = sts_client.get_caller_identity()["Account"]
+
+        # Get the account alias using the account ID
+        account_aliases = sts_client.list_account_aliases()['AccountAliases']
+        if account_aliases:
+            account_name = account_aliases[0]
+        else:
+            # If there is no account alias, use the account ID as the name
+            account_name = account_id
+
+        return account_name
+
+    except Exception as e:
+        print(f"Error retrieving account name: {e}")
+        return None
+
+def lambda_handler(event, context):
+    account_name = get_aws_account_name()
+    if account_name:
+        print("AWS Account Name:", account_name)
+    else:
+        print("Unable to retrieve AWS account name.")
+
+if __name__ == "__main__":
+    lambda_handler(None, None)  # For testing purposes
+    
