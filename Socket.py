@@ -1,4 +1,4 @@
-import socket
+jiimport socket
 import threading
 
 # Create a socket object
@@ -36,3 +36,31 @@ while True:
     clients.append(client_socket)
     client_thread = threading.Thread(target=handle_client, args=(client_socket,))
     client_thread.start()
+
+
+
+
+
+import socket
+import threading
+
+def receive_messages(client_socket):
+    while True:
+        try:
+            message = client_socket.recv(1024).decode()
+            print("Received:", message)
+        except:
+            break
+
+host = socket.gethostname()
+port = 12345
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((host, port))
+
+receive_thread = threading.Thread(target=receive_messages, args=(client_socket,))
+receive_thread.start()
+
+while True:
+    message = input("Enter a message: ")
+    client_socket.send(message.encode())
