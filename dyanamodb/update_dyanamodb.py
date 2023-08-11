@@ -1,27 +1,35 @@
 import boto3
-import pandas as pd
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb', region_name='your_region')
+# Initialize the DynamoDB client
+dynamodb = boto3.client('dynamodb')
 
-# Load Excel data
-excel_file = 'your_excel_file.xlsx'
-df = pd.read_excel(excel_file)
-value_to_update = df['Column_Name'][0]  # Adjust 'Column_Name' to the actual column name
-
-# Initialize DynamoDB table
+# Specify the table name
 table_name = 'YourTableName'
-table = dynamodb.Table(table_name)
 
-# Update the item in DynamoDB
-response = table.update_item(
-    Key={
-        'PartitionKey': value_to_update  # Assuming your partition key attribute is named 'PartitionKey'
-    },
-    UpdateExpression='SET attribute_name = :new_value',  # Replace 'attribute_name' with your attribute
-    ExpressionAttributeValues={
-        ':new_value': 'new_value_here'
-    }
-)
-
-print("Item updated:", response)
+# Iterate through the DataFrame
+for index, row in df.iterrows():
+    partition_key_value = str(row['PartitionKeyColumn'])  # Assuming a partition key column in the DataFrame
+    
+    # Construct the UpdateExpression and ExpressionAttributeValues
+    update_expression = "SET "
+    expression_attribute_values = {}
+    
+    for column_name in df.columns:
+        if column_name != 'PartitionKeyColumn':
+            update_expression += f" {column_name} = :{column_name},"
+            expression_attribute_values[f":{column_name}"] = {'S': str(row[column_name])}
+    
+    update_expression = update_expression.rstrip(',')
+    
+    # Update the item
+    response = dynamodb.update_item(
+        TableName=table_name,
+        Key={
+            'PartitionKey': {'S': partition_key_value}
+        },
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_attribute_values
+    )
+    
+    print(f"Item with PartitionKey {partition_key_value} updated successfully!")
+    
